@@ -1,15 +1,16 @@
 package co.mobilemakers.contacts;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.Toast;
 
 
 public class MainContactsActivity extends ActionBarActivity {
@@ -53,7 +54,15 @@ public class MainContactsActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        private static final int REQUEST_CODE_CREAT_CONTACT = 0 ;
+
         public PlaceholderFragment() {
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setHasOptionsMenu(true);
         }
 
         @Override
@@ -61,6 +70,42 @@ public class MainContactsActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_contacts_list, container, false);
             return rootView;
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            inflater.inflate(R.menu.menu_contacts, menu);
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            boolean handle = false;
+
+            switch (item.getItemId()) {
+                case R.id.add_toolbar_button:
+                    Intent intent = new Intent(getActivity(), ContactCreationActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE_CREAT_CONTACT);
+                    handle = true;
+                break;
+            }
+
+            if(!handle) {
+                return super.onOptionsItemSelected(item);
+            }
+
+            return handle;
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if(data != null) {
+                Contact contact = new Contact(data.getExtras().getString("nickname") ,  data.getExtras().getString("imageUrl"));
+                Toast.makeText(getActivity(),contact.toString(), Toast.LENGTH_SHORT ).show();
+            } else {
+                Toast.makeText(getActivity(),"Anything to add, sorry :(", Toast.LENGTH_SHORT ).show();
+            }
+
         }
     }
 }

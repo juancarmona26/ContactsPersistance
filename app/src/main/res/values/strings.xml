@@ -5,5 +5,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="text_view_empty_list">There are not Contacts added</string>
+    <string name="title_activity_contact_creation">ContactCreationActivity</string>
+    <string name="text_view_add_contact_title">Enter Nickname and a imgage URL for the contact</string>
+    <string name="edit_text_view_nickname">User Nickname</string>
+    <string name="edit_text_view_image_url">Image URL</string>
+    <string name="button_add_contact">Add contact</string>
 
 </resources>
