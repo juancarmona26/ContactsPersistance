@@ -10,5 +10,6 @@
     <string name="edit_text_view_nickname">User Nickname</string>
     <string name="edit_text_view_image_url">Image URL</string>
     <string name="button_add_contact">Add contact</string>
+    <string name="message_received">Nickname:</string>
 
 </resources>

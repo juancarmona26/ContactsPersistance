@@ -34,7 +34,7 @@ public class Contact {
 
     @Override
     public String toString() {
-        String propertiesToString  = "Nickname: " + nickname +" Image URL: " + imageUrl;
+        String propertiesToString  = "Nickname: " + this.nickname + " Image URL: " + this.imageUrl;
         return propertiesToString;
     }
 }
