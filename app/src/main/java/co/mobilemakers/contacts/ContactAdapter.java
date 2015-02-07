@@ -29,7 +29,6 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         super(context, R.layout.contact_list_entry, contacts );
         mContext = context;
         mContacts = contacts;
-
     }
 
     @Override
@@ -47,22 +46,39 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
             rowView = inflater.inflate(R.layout.contact_list_entry, parent, false);
         }
         if(rowView != null) {
-            TextView textViewTaskTitle = (TextView) rowView.findViewById(R.id.text_view_contact_name);
-            textViewTaskTitle.setText(mContacts.get(position).getFirstName());
-            File imageFile = new File(mContacts.get(position).getImageUrl());
-            Uri imageUri = Uri.fromFile(imageFile);
-            Bitmap image = null;
-            try {
-                image = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), imageUri);
-            } catch (IOException e) {
-                Log.d(LOG_TAG, "Somthing happens to image", e);
-            }
-            ImageView imageView = (ImageView) rowView.findViewById(R.id.image_view_contact);
-            if(image != null ) {
-
-                imageView.setImageBitmap(Bitmap.createScaledBitmap(image, 100, 100, false));
-            } else imageView.setImageResource(R.drawable.image_default_globe);
+            placeContactNameOnRow(position, rowView);
+            Bitmap image = prepareBitmap(position);
+            setImageToImageViewOnRow(rowView, image);
         }
         return rowView;
+    }
+
+    private void setImageToImageViewOnRow(View rowView, Bitmap image) {
+        ImageView imageView = (ImageView) rowView.findViewById(R.id.image_view_contact);
+        if(image != null ) {
+
+            imageView.setImageBitmap(Bitmap.createScaledBitmap(image, 100, 100, false));
+        } else imageView.setImageResource(R.drawable.image_default_globe);
+    }
+
+    private Bitmap prepareBitmap(int position) {
+        File imageFile = new File(mContacts.get(position).getImageUrl());
+        Uri imageUri = Uri.fromFile(imageFile);
+        Bitmap image = null;
+        try {
+            image = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), imageUri);
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "Something happens to image", e);
+        }
+        return image;
+    }
+
+    private void placeContactNameOnRow(int position, View rowView) {
+        TextView textViewTaskTitle = (TextView) rowView.findViewById(R.id.text_view_contact_name);
+        if(mContacts.get(position).getNickname() != null && !mContacts.get(position).getNickname().equals("")) {
+            textViewTaskTitle.setText(mContacts.get(position).getNickname());
+        } else {
+            textViewTaskTitle.setText(mContacts.get(position).getFirstName());
+        }
     }
 }

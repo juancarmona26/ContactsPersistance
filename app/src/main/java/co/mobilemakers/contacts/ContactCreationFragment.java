@@ -150,7 +150,7 @@ public class ContactCreationFragment extends Fragment {
         intent.putExtra("firstName", mEditTextFirstName.getText().toString());
         intent.putExtra("lastName", mEditTextLastName.getText().toString());
         intent.putExtra("nickname", mEditTextUserNick.getText().toString());
-        intent.putExtra("imageUri", fileUri.getPath());
+        intent.putExtra("imageUri", fileUri != null ? fileUri.getPath(): "");
 
         activity.setResult(Activity.RESULT_OK, intent);
         activity.finish();

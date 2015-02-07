@@ -42,10 +42,10 @@ public class ContactsListFragment extends ListFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        perpareListView();
+        prepareListView();
     }
 
-    private void perpareListView() {
+    private void prepareListView() {
         List<Contact> contacts = new ArrayList<>();
         mArrayAdapter  = new ContactAdapter(getActivity(), contacts);
         setListAdapter(mArrayAdapter);
