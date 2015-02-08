@@ -1,21 +1,27 @@
 package co.mobilemakers.contacts;
 
-/**
- * Created by Juan on 05/02/2015.
- */
+import com.j256.ormlite.field.DatabaseField;
+
+import java.util.Date;
+
 public class Contact {
-    private String firstName;
-    private String lastName;
-    private String nickname;
-    private String imageUrl;
+
+    public final static String ID = "_ID";
+    public final static String FIRST_NAME = "firstName";
+    public final static String LAST_NAME = "lastName";
+    public final static String NICKNAME = "nickname";
+    public final static String IMAGE_URL = "imageURL";
+    public final static String CREATION_DATE = "date";
+
+    @DatabaseField(generatedId = true, columnName = ID) private int id;
+    @DatabaseField (columnName = FIRST_NAME)private String firstName;
+    @DatabaseField (columnName = LAST_NAME) private String lastName;
+    @DatabaseField (columnName = NICKNAME) private String nickname;
+    @DatabaseField (columnName = IMAGE_URL)private String imageUrl;
+    @DatabaseField (columnName = CREATION_DATE) private Date date = new Date();
 
     public Contact(){
 
-    }
-
-    public Contact (String nickname, String imageUrl) {
-        this.nickname = nickname;
-        this.imageUrl = imageUrl;
     }
 
     public String getFirstName() {
@@ -50,9 +56,16 @@ public class Contact {
         this.imageUrl = imageUrl;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
     @Override
     public String toString() {
-        String propertiesToString  = "Nickname: " + getFirstName() + " Last Name: " + getLastName() + "imageURI: " + getImageUrl();
-        return propertiesToString;
+        return "Nickname: " + getFirstName() + " Last Name: " + getLastName() + "imageURI: " + getImageUrl();
     }
 }
