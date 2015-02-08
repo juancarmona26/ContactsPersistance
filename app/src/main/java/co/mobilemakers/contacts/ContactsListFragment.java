@@ -28,8 +28,8 @@ import java.util.List;
 public class ContactsListFragment extends ListFragment {
 
     private static final String LOG_TAG = ContactsListFragment.class.getSimpleName();
-    private static final int REQUEST_CODE_CREATE_CONTACT = 0 ;
-    private static final int REQUEST_CODE_EDIT_CONTACT = 1;
+    public static final int REQUEST_CODE_CREATE_CONTACT = 0 ;
+    public static final int REQUEST_CODE_EDIT_CONTACT = 1;
     private ArrayAdapter<Contact> mArrayAdapter;
     private DatabaseHelper mDBHelper;
 
@@ -128,19 +128,24 @@ public class ContactsListFragment extends ListFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Contact contact;
         if(resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                Contact contact = new Contact();
-                contact.setFirstName(data.getExtras().getString("firstName"));
-                contact.setLastName(data.getExtras().getString("lastName"));
-                contact.setNickname(data.getExtras().getString("nickname"));
-                contact.setImageUrl(data.getExtras().getString("imageUri"));
+                contact = data.getExtras().getParcelable("contact");
+            switch (requestCode) {
+                case REQUEST_CODE_CREATE_CONTACT:
 
-                saveContact(contact);
+                    saveContact(contact);
+                    mArrayAdapter.add(contact);
+                    Toast.makeText(getActivity(), contact.getFirstName() + " added.", Toast.LENGTH_LONG).show();
+                break;
 
-                mArrayAdapter.add(contact);
+                case REQUEST_CODE_EDIT_CONTACT:
+                    editContact(contact);
+                    break;
+            }
 
-                Toast.makeText(getActivity(), contact.toString(), Toast.LENGTH_LONG).show();
+
             } else {
                 Toast.makeText(getActivity(), "Anything to add, sorry :(", Toast.LENGTH_SHORT).show();
             }
@@ -149,9 +154,21 @@ public class ContactsListFragment extends ListFragment {
         }
     }
 
+    private void editContact(Contact contact) {
+        try {
+            Dao<Contact, Integer> contactDao = getDBHelper().getContactDao();
+            contactDao.update(contact);
+            List<Contact> contacts = retrieveContacts();
+            mArrayAdapter.clear();
+            showContactList();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void saveContact(Contact contact) {
         try {
-        Dao<Contact, Integer> contactDao=getDBHelper().getContactDao();
+            Dao<Contact, Integer> contactDao=getDBHelper().getContactDao();
             contactDao.create(contact);
         } catch (SQLException e) {
             e.printStackTrace();

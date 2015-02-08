@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -108,21 +107,22 @@ public class ContactCreationFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(requestCode == 1) {
+        if(requestCode == ContactsListFragment.REQUEST_CODE_EDIT_CONTACT) {
             mEditTextFirstName.setText(mContact.getFirstName());
             mEditTextLastName.setText(mContact.getLastName());
             mEditTextUserNick.setText(mContact.getNickname());
-            mImageButtonSelector.setImageBitmap(Bitmap.createScaledBitmap(prepareBitmap(mContact.getImageUrl()),500,500,false));
-
+            if (!mContact.getImageUrl().equals("") && mContact.getImageUrl() != null)
+                mImageButtonSelector.setImageBitmap(Bitmap.createScaledBitmap(prepareBitmap(mContact.getImageUrl()), 500, 500, false));
+            mButtonAddContact.setText(R.string.button_edit_contact);
         }
     }
 
     private Bitmap prepareBitmap(String imagePath) {
         File imageFile = new File(mContact.getImageUrl());
-        Uri imageUri = Uri.fromFile(imageFile);
+        fileUri = Uri.fromFile(imageFile);
         Bitmap image = null;
         try {
-            image = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+            image = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), fileUri);
         } catch (IOException e) {
             Log.d(LOG_TAG, "Something happens to image", e);
         }
@@ -135,7 +135,7 @@ public class ContactCreationFragment extends Fragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.button_add_contact:
-                    returnContactProperties();
+                    returnResultContact();
                 break;
 
                 case R.id.image_button_selector:
@@ -180,14 +180,18 @@ public class ContactCreationFragment extends Fragment {
         mImageButtonSelector.setOnClickListener(clickListener);
     }
 
-    private void returnContactProperties() {
+    private void returnResultContact() {
         Activity activity = getActivity();
         Intent intent = new Intent();
-
-        intent.putExtra("firstName", mEditTextFirstName.getText().toString());
-        intent.putExtra("lastName", mEditTextLastName.getText().toString());
-        intent.putExtra("nickname", mEditTextUserNick.getText().toString());
-        intent.putExtra("imageUri", fileUri != null ? fileUri.getPath(): "");
+        Contact contact = new Contact();
+        if(requestCode == ContactsListFragment.REQUEST_CODE_EDIT_CONTACT) {
+            contact.setId(mContact.getId());
+        }
+        contact.setFirstName(mEditTextFirstName.getText().toString());
+        contact.setLastName(mEditTextLastName.getText().toString());
+        contact.setNickname(mEditTextUserNick.getText().toString());
+        contact.setImageUrl(fileUri != null ? fileUri.getPath(): "");
+        intent.putExtra("contact", contact );
 
         activity.setResult(Activity.RESULT_OK, intent);
         activity.finish();
@@ -200,6 +204,7 @@ public class ContactCreationFragment extends Fragment {
         mImageButtonSelector = (ImageButton) rootView.findViewById(R.id.image_button_selector);
         mButtonAddContact = (Button) rootView.findViewById(R.id.button_add_contact);
         mButtonAddContact.setEnabled(false);
+
     }
 
     private void changeButtonStatus () {

@@ -45,9 +45,12 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView = inflater.inflate(R.layout.contact_list_entry, parent, false);
         }
+        Bitmap image = null;
         if(rowView != null) {
             placeContactNameOnRow(position, rowView);
-            Bitmap image = prepareBitmap(position);
+            if(!mContacts.get(position).getImageUrl().equals("") && mContacts.get(position).getImageUrl() != null) {
+                image = prepareBitmap(position);
+            }
             setImageToImageViewOnRow(rowView, image);
         }
         return rowView;
@@ -56,7 +59,6 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
     private void setImageToImageViewOnRow(View rowView, Bitmap image) {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.image_view_contact);
         if(image != null ) {
-
             imageView.setImageBitmap(Bitmap.createScaledBitmap(image, 100, 100, false));
         } else imageView.setImageResource(R.drawable.image_default_globe);
     }

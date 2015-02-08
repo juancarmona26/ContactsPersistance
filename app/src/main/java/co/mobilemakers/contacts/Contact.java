@@ -17,14 +17,14 @@ public class Contact implements Parcelable {
     public final static String IMAGE_URL = "imageURL";
     public final static String CREATION_DATE = "date";
 
-
-    public final static Contact contact = null;
-
     @DatabaseField(generatedId = true, columnName = ID) private int id;
     @DatabaseField (columnName = FIRST_NAME)private String firstName;
     @DatabaseField (columnName = LAST_NAME) private String lastName;
     @DatabaseField (columnName = NICKNAME) private String nickname;
     @DatabaseField (columnName = IMAGE_URL)private String imageUrl;
+
+
+
     @DatabaseField (columnName = CREATION_DATE) private Date date = new Date();
     public static final Creator<Contact> CREATOR = new Creator<Contact>(){
 
@@ -89,9 +89,16 @@ public class Contact implements Parcelable {
     public int getId() {
         return id;
     }
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public Date getDate() {
         return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override

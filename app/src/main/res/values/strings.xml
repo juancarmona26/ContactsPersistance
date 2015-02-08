@@ -9,10 +9,11 @@
     <string name="text_view_add_contact_title">Enter Nickname and a imgage URL for the contact</string>
     <string name="edit_text_view_nickname">User Nickname</string>
     <string name="edit_text_view_image_url">Image URL</string>
-    <string name="button_add_contact">Add contact</string>
+    <string name="button_add_contact">Done</string>
     <string name="message_received">Contact: %s</string>
     <string name="edit_text_first_name_hint">First name</string>
     <string name="edit_text_last_name_hint">Last name</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="button_edit_contact">Update</string>
 
 </resources>
