@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -32,6 +34,8 @@ public class ContactCreationFragment extends Fragment {
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1;
     private static final String LOG_TAG = ContactCreationFragment.class.getSimpleName();
     private Uri fileUri;
+    private int requestCode;
+    private Contact mContact;
     private EditText mEditTextFirstName;
     private EditText mEditTextLastName;
     private EditText mEditTextUserNick;
@@ -76,6 +80,15 @@ public class ContactCreationFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null){
+            requestCode = getArguments().getInt("requestCode");
+            mContact = getArguments().getParcelable("contact");
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contact_creation, container, false);
@@ -90,6 +103,30 @@ public class ContactCreationFragment extends Fragment {
         mEditTextFirstName.addTextChangedListener(new ContentWatcher(FilledFields.FirstName));
         mEditTextLastName.addTextChangedListener(new ContentWatcher(FilledFields.LastName));
 
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(requestCode == 1) {
+            mEditTextFirstName.setText(mContact.getFirstName());
+            mEditTextLastName.setText(mContact.getLastName());
+            mEditTextUserNick.setText(mContact.getNickname());
+            mImageButtonSelector.setImageBitmap(Bitmap.createScaledBitmap(prepareBitmap(mContact.getImageUrl()),500,500,false));
+
+        }
+    }
+
+    private Bitmap prepareBitmap(String imagePath) {
+        File imageFile = new File(mContact.getImageUrl());
+        Uri imageUri = Uri.fromFile(imageFile);
+        Bitmap image = null;
+        try {
+            image = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "Something happens to image", e);
+        }
+        return image;
     }
 
     View.OnClickListener clickListener = new View.OnClickListener(){

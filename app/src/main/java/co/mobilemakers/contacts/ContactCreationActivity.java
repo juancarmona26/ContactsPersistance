@@ -12,9 +12,18 @@ public class ContactCreationActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_creation);
+
         if (savedInstanceState == null) {
+            Bundle bundle = new Bundle();
+            ContactCreationFragment contactCreationFragment = new ContactCreationFragment();
+            if(getIntent() != null) {
+                bundle.putInt("requestCode", getIntent().getExtras().getInt("requestCode"));
+                bundle.putParcelable("contact",getIntent().getExtras().getParcelable("contact"));
+                contactCreationFragment.setArguments(bundle);
+            }
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ContactCreationFragment())
+                    .replace(R.id.container, contactCreationFragment)
                     .commit();
         }
     }

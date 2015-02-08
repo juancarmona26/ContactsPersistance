@@ -13,5 +13,6 @@
     <string name="message_received">Contact: %s</string>
     <string name="edit_text_first_name_hint">First name</string>
     <string name="edit_text_last_name_hint">Last name</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

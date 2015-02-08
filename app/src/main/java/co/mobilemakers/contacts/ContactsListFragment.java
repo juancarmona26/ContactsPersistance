@@ -3,6 +3,8 @@ package co.mobilemakers.contacts;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -26,7 +28,8 @@ import java.util.List;
 public class ContactsListFragment extends ListFragment {
 
     private static final String LOG_TAG = ContactsListFragment.class.getSimpleName();
-    private static final int REQUEST_CODE_CREAT_CONTACT = 0 ;
+    private static final int REQUEST_CODE_CREATE_CONTACT = 0 ;
+    private static final int REQUEST_CODE_EDIT_CONTACT = 1;
     private ArrayAdapter<Contact> mArrayAdapter;
     private DatabaseHelper mDBHelper;
 
@@ -68,8 +71,7 @@ public class ContactsListFragment extends ListFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        prepareListView();
-//        showContactList();
+        showContactList();
     }
 
     private void showContactList() {
@@ -79,29 +81,22 @@ public class ContactsListFragment extends ListFragment {
         }
 
         setListAdapter(mArrayAdapter);
+        setListViewListener();
+    }
+
+    private void setListViewListener() {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Contact contact = (Contact) parent.getItemAtPosition(position);
-                String message = String.format(getString(R.string.message_received), contact.toString());
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), ContactCreationActivity.class);
+                intent.putExtra("requestCode",REQUEST_CODE_EDIT_CONTACT);
+                intent.putExtra("contact", (Contact)parent.getItemAtPosition(position));
+
+                startActivityForResult(intent, REQUEST_CODE_EDIT_CONTACT);
             }
         });
     }
 
-    private void prepareListView() {
-        List<Contact> contacts = new ArrayList<>();
-        mArrayAdapter  = new ContactAdapter(getActivity(), contacts);
-        setListAdapter(mArrayAdapter);
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Contact contact = (Contact) parent.getItemAtPosition(position);
-                String message = String.format(getString(R.string.message_received), contact.toString());
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -126,7 +121,8 @@ public class ContactsListFragment extends ListFragment {
 
     private void goToCreateContactActivity() {
         Intent intent = new Intent(getActivity(), ContactCreationActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_CREAT_CONTACT);
+        intent.putExtra("requestCode",REQUEST_CODE_CREATE_CONTACT);
+        startActivityForResult(intent, REQUEST_CODE_CREATE_CONTACT);
     }
 
     @Override
