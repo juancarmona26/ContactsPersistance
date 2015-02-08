@@ -1,5 +1,6 @@
 package co.mobilemakers.contacts;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,7 +14,11 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -40,6 +45,7 @@ public class ContactCreationFragment extends Fragment {
     private EditText mEditTextUserNick;
     private ImageButton mImageButtonSelector;
     private Button mButtonAddContact;
+    private ActionBar actionBar;
     private enum FilledFields {
         FirstName,
         LastName,
@@ -85,6 +91,7 @@ public class ContactCreationFragment extends Fragment {
             requestCode = getArguments().getInt("requestCode");
             mContact = getArguments().getParcelable("contact");
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -192,6 +199,7 @@ public class ContactCreationFragment extends Fragment {
         contact.setNickname(mEditTextUserNick.getText().toString());
         contact.setImageUrl(fileUri != null ? fileUri.getPath(): "");
         intent.putExtra("contact", contact );
+        intent.putExtra("delete", 0);
 
         activity.setResult(Activity.RESULT_OK, intent);
         activity.finish();
@@ -204,6 +212,7 @@ public class ContactCreationFragment extends Fragment {
         mImageButtonSelector = (ImageButton) rootView.findViewById(R.id.image_button_selector);
         mButtonAddContact = (Button) rootView.findViewById(R.id.button_add_contact);
         mButtonAddContact.setEnabled(false);
+
 
     }
 
@@ -238,5 +247,41 @@ public class ContactCreationFragment extends Fragment {
         }
 
         return mediaFile;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_contact_edition, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean handle = false;
+
+        switch (item.getItemId()) {
+            case R.id.menu_delete_contact:
+                Intent intent = new Intent();
+                intent.putExtra("delete", 1);
+                intent.putExtra("contact", mContact);
+                Activity activity = getActivity();
+
+                activity.setResult(Activity.RESULT_OK, intent);
+                activity.finish();
+
+                handle = true;
+            break;
+        }
+
+        if(!handle)
+            handle = super.onOptionsItemSelected(item);
+
+        return handle;
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if(requestCode == ContactsListFragment.REQUEST_CODE_CREATE_CONTACT)
+            menu.getItem(0).setEnabled(false);
     }
 }

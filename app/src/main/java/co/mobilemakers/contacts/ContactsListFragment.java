@@ -141,16 +141,30 @@ public class ContactsListFragment extends ListFragment {
                 break;
 
                 case REQUEST_CODE_EDIT_CONTACT:
-                    editContact(contact);
+                    if(data.getExtras().getInt("delete") ==1){
+                        deleteContact(data);
+                    } else editContact(contact);
                     break;
             }
 
 
             } else {
-                Toast.makeText(getActivity(), "Anything to add, sorry :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), ":(", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(getActivity(), "Anything to add, sorry :(", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Something was wrong", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void deleteContact(Intent data) {
+        try {
+            Dao<Contact, Integer> contactDao = mDBHelper.getContactDao();
+            contactDao.delete((Contact)data.getExtras().getParcelable("contact"));
+            List<Contact> contacts = retrieveContacts();
+            mArrayAdapter.clear();
+            showContactList();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
